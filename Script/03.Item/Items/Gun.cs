@@ -62,7 +62,7 @@ public class Gun : Item
         CreateItem createItem = FindObjectOfType<CreateItem>();
         for (int i = 0; i < magazine; i++)
         {
-            bullets.Add((createItem.GetCreateItem(ITEMINDEX.MM9)).GetComponent<MMNine>());
+            bullets.Add((createItem.GetCreateItem(ITEM_INDEX.MM9)).GetComponent<MMNine>());
             bullets[i].gameObject.SetActive(false);
         }
 

@@ -7,9 +7,9 @@ using UnityEngine;
 public class Item : Inter
 {
     [Header("아이템 번호")]
-    public ITEMINDEX index;
+    public ITEM_INDEX index;
     [Header("아이템 종류")]
-    public ITEMKIND kind;
+    public ITEM_KIND kind;
     protected Ch user;          //누가 쓰는가
     protected Pa effecter;      //효과를 누가 받는가
     protected List<Unit> paList = new List<Unit>();

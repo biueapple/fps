@@ -107,7 +107,7 @@ public class Inventory
 
         return null;
     }
-    public Item GetItem(ITEMINDEX index)
+    public Item GetItem(ITEM_INDEX index)
     {
         for (int i = 0; i < items.Length; i++)
         {
@@ -123,7 +123,7 @@ public class Inventory
         return null;
     }
 
-    public void CreateItem(ITEMINDEX index, int count = 0)
+    public void CreateItem(ITEM_INDEX index, int count = 0)
     {
         if(count != 0)
         {

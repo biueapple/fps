@@ -29,7 +29,7 @@ public class Pistol : Item
         }
         if(user != null)
         {
-            Item item = user.GetItem(ITEMINDEX.MM9);
+            Item item = user.GetItem(ITEM_INDEX.MM9);
             if(item != null)
             {
                 user.ItemRemove(item);

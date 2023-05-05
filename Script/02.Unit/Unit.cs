@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Unit : Pa
 {
@@ -24,11 +25,11 @@ public class Unit : Pa
     }
     public void AutomaticMovement(Vector3 direction)     //자동이동 (봇이 쓰는거)
     {
-        if (GetComponent<Rigidbody>() == null)
+        if (GetComponent<NavMeshAgent>() == null)
         {
-            gameObject.AddComponent<Rigidbody>();
+            gameObject.AddComponent<NavMeshAgent>();
         }
-        transform.GetComponent<Rigidbody>().MovePosition(transform.position + direction * Time.deltaTime * moveSpeed);
+        transform.GetComponent<NavMeshAgent>().destination = direction;
     }
     public void Jump(float power)
     {

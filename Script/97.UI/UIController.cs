@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UnityEngine.Tilemaps;
+using System;
+using System.Runtime.CompilerServices;
 
 public class UIController : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class UIController : MonoBehaviour
     private List<GameObject> basicsUI = new List<GameObject>();         //기본적으로 항상 열러있는 ui
     public GameObject bottomUI;            //uiOpens가 0일때 esc누르면 나올 가장 아래 ui
     public Text damageUI;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,10 +40,10 @@ public class UIController : MonoBehaviour
     {
         Text text = Instantiate(damageUI ,canvas.transform);
         text.gameObject.SetActive(true);
-        StartCoroutine(FadeOut(text, wait, fade));
+        StartCoroutine(FadeOut(text, wait, fade, true));
         StartCoroutine(Follow(text, cam, enemy, wait + fade, plus));
     }
-    private IEnumerator Follow(Text text, Camera cam, Transform enemy, float time, Vector3 plus)
+    public IEnumerator Follow(Text text, Camera cam, Transform enemy, float time, Vector3 plus)
     {
         float t = 0;
         while(true)
@@ -55,19 +58,40 @@ public class UIController : MonoBehaviour
             }
         }
     }
-    private IEnumerator FadeOut(Text text, float wait, float fade)
+    
+    public IEnumerator FadeOut(Graphic graphic, float wait, float fade, bool destroy, Action action = null)
     {
+        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, 1);
         yield return new WaitForSeconds(wait);
         float t = 1;
-        while(true)
+        while (true)
         {
-            text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a * t > 1 ? 1 : text.color.a * t);
+            graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, t);
             yield return null;
             t -= Time.deltaTime / fade;
             if (t < 0)
                 break;
         }
-        Destroy(text.gameObject);
+        if(action != null)
+            action();
+        if(destroy)
+            Destroy(graphic.gameObject);
+    }
+    public IEnumerator FadeIn(Graphic graphic, float wait, float fade, Action action = null)
+    {
+        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, 0);
+        yield return new WaitForSeconds(wait);
+        float t = 0;
+        while (true)
+        {
+            graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, t);
+            yield return null;
+            t += Time.deltaTime / fade;
+            if (t >= 1)
+                break;
+        }
+        if (action != null)
+            action();
     }
 
     public void OpenBasic(GameObject obj)

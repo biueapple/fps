@@ -5,24 +5,22 @@ using UnityEngine.UI;
 
 public class SelectMenu : MonoBehaviour
 {
-    private Ch[] characters;
+    private CreateUnit createUnit;
     private List<Image> images = new List<Image>();
     private UIController uIController;
 
-    public NewBehaviourScript player;
+    
     public Transform content;
     public Image selectedImage;
-    public GameObject InGamePanel;
 
-
-    private int index = -1;
+    public int index = -1;
 
     void Start()
     {
         uIController= FindObjectOfType<UIController>();
+        createUnit = FindObjectOfType<CreateUnit>();
 
-        characters = Resources.LoadAll<Ch>("Character");
-        for (int i = 0; i < characters.Length; i++)
+        for (int i = 0; i < createUnit.GetCharacters().Length; i++)
         {
             GameObject obj = new GameObject();
             obj.AddComponent<CanvasRenderer>();
@@ -31,7 +29,7 @@ public class SelectMenu : MonoBehaviour
             
             images.Add(obj.GetComponent<Image>());
             images[i].rectTransform.sizeDelta = new Vector2(150, 150);
-            images[i].sprite = characters[i].paScriptble.GetSprite();
+            images[i].sprite = createUnit.GetCharacters()[i].paScriptble.GetSprite();
         }
     }
 
@@ -44,7 +42,7 @@ public class SelectMenu : MonoBehaviour
             if(images.Contains(image))
             {
                 index = images.IndexOf(image);
-                selectedImage.sprite = characters[index].paScriptble.GetSprite();
+                selectedImage.sprite = createUnit.GetCharacters()[index].paScriptble.GetSprite();
             }
         }
         else if(Input.GetMouseButtonDown(1))
@@ -54,21 +52,21 @@ public class SelectMenu : MonoBehaviour
         }
     }
 
-    public void CreateCharacter(Ch ch, Vector3 vector)
-    {
-        player.ch = Instantiate(ch, vector, Quaternion.identity);
-        player.ch.Init();
-        player.ch.player = player;
-        player.cam = player.ch.hand.parent.GetComponent<Camera>();
-        Camera.main.gameObject.SetActive(false);
-    }
+    //public void CreateCharacter(Ch ch, Vector3 vector)
+    //{
+    //    player.ch = createUnit.GetCreateCharacter(ch);
+    //    player.ch.Init();
+    //    player.ch.player = player;
+    //    player.cam = player.ch.hand.parent.GetComponent<Camera>();
+    //    Camera.main.gameObject.SetActive(false);
+    //}
 
-    public void StartButton()
-    {
-        if (index < 0 || index >= characters.Length)
-            return;
-        CreateCharacter(characters[index], Vector3.zero);
-        InGamePanel.SetActive(true);
-        gameObject.SetActive(false);
-    }
+    //public void StartButton()
+    //{
+    //    if (index < 0 || index >= createUnit.GetCharacters().Length)
+    //        return;
+    //    CreateCharacter(createUnit.GetCharacters()[index].GetComponent<Ch>(), Vector3.zero);
+    //    InGamePanel.SetActive(true);
+    //    gameObject.SetActive(false);
+    //}
 }

@@ -49,11 +49,11 @@ public class Ch : Unit
         }
     }
 
-    public void InteractingRay(Ray ray, LayerMask mask, KeyCode code)
+    public void InteractingRay(Ray ray/*, LayerMask mask*/, KeyCode code)
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, float.MaxValue, mask))
+        if (Physics.Raycast(ray, out hit, float.MaxValue/*, mask*/))
         {
             if (hit.transform.GetComponent<Inter>() != null)
             {
@@ -64,7 +64,7 @@ public class Ch : Unit
             }
         }
     }
-    public void ItemCreateAcquired(ITEMINDEX index, int count = 0)
+    public void ItemCreateAcquired(ITEM_INDEX index, int count = 0)
     {
         inventory.CreateItem(index, count);
     }
@@ -74,7 +74,7 @@ public class Ch : Unit
         {
             item.Acquired(this);
         }
-        if(item.kind == ITEMKIND.EQUIP)
+        if(item.kind == ITEM_KIND.EQUIP)
         {
             inventory.EquipItem(item);
         }
@@ -129,7 +129,7 @@ public class Ch : Unit
     {
         inventory.RemoveItem(item);
     }
-    public Item GetItem(ITEMINDEX item)
+    public Item GetItem(ITEM_INDEX item)
     {
         return inventory.GetItem(item);
     }

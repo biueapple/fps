@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ITEMINDEX
+public enum ITEM_INDEX
 {
     NONE = 0,
     POTION,
@@ -11,7 +11,7 @@ public enum ITEMINDEX
     SAORI_HANDGUN,
 
 }
-public enum ITEMKIND
+public enum ITEM_KIND
 {
     NONE = 0,
     EQUIP,
@@ -30,13 +30,19 @@ public enum KIND_BULLET
     _9MM,
 
 }
+public enum ENEMY_KIND
+{
+    NONE = 0,
+    TEST_ENEMY,
+
+}
 
 
 public class NewBehaviourScript : MonoBehaviour
 {
     public Ch ch;
     public Camera cam;
-    public LayerMask layerMask;
+    //public LayerMask layerMask;
 
     private float rotX;
     private float rotY;
@@ -48,10 +54,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     void Start()
     {
-        //ch.Init();
-        //ch.script = this;
-        //cam = ch.hand.parent;
-        controller = FindObjectOfType<UIController>();
+        //Init();
     }
 
 
@@ -62,6 +65,13 @@ public class NewBehaviourScript : MonoBehaviour
         Interacting();
         HandUse();
         ChStateChange();
+    }
+
+    public void Init(float maxY, float minY)
+    {
+        controller = FindObjectOfType<UIController>();
+        this.maxY = maxY;
+        this.minY = minY;   
     }
 
     public void GiveDamage(GameObject enemy)
@@ -114,7 +124,7 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Ray ray = new Ray();
             ray = cam.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
-            ch.InteractingRay(ray, layerMask, KeyCode.E);
+            ch.InteractingRay(ray/*, layerMask*/, KeyCode.E);
         }
     }
     public void HandUse()

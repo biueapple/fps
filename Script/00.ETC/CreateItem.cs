@@ -4,20 +4,27 @@ using UnityEngine;
 
 public class CreateItem : MonoBehaviour
 {
-    public Item[] Items;
+    private Item[] Items;
 
-    public Item GetCreateItem(ITEMINDEX item)
+    private void Awake()
+    {
+        Items = Resources.LoadAll<Item>("Item");
+    }
+
+    public Item GetCreateItem(ITEM_INDEX item)
     {
         for(int  i= 0; i < Items.Length; i++)
         {
             if (Items[i].index == item)
             {
-                return Instantiate(Items[i]);
+                Item t = Instantiate(Items[i]);
+                t.Init();
+                return t;
             }
         }
         return null;
     }
-    public Item[] GetCreateItem(ITEMINDEX item, int count)
+    public Item[] GetCreateItem(ITEM_INDEX item, int count)
     {
         Item[] list = new Item[count];
         for (int i = 0; i < Items.Length; i++)
@@ -27,6 +34,7 @@ public class CreateItem : MonoBehaviour
                 for(int j = 0; j < count; j++)
                 {
                     list[j] = Instantiate(Items[i]);
+                    list[j].Init();
                 }
                 break;
             }

@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ITEM_INDEX
 {
@@ -9,6 +8,7 @@ public enum ITEM_INDEX
     PISTOL,
     MM9,
     SAORI_HANDGUN,
+    GRENADE,
 
 }
 public enum ITEM_KIND
@@ -49,9 +49,14 @@ public class NewBehaviourScript : MonoBehaviour
     [Header("최대 각도외 최소 각도(Y)")]
     public float maxY;
     public float minY;
+    private bool mouseMove = true;
+    private float interRange = 5;
 
     private UIController controller;
+    private InventoryView inventoryView;
 
+    RaycastHit hit;
+    Ray ray = new Ray();
     void Start()
     {
         //Init();
@@ -60,23 +65,79 @@ public class NewBehaviourScript : MonoBehaviour
 
     void Update()
     {
-        Movement();
-        Jump();
-        Interacting();
-        HandUse();
-        ChStateChange();
+        if(mouseMove)
+        {
+            //캐릭터 컨트롤
+            Movement();
+            Jump();
+            Interacting();
+            HandUse();
+            ChStateChange();
+            HandChange();
+        }
+        else
+        {
+            //ui 컨트롤
+            //아이템 옮기거나 해야함
+            InputInventoryController();
+        }
+
+        //ui열고 닫기
+        InputInventoryKey();
     }
 
-    public void Init(float maxY, float minY)
+    public void Init(float maxY, float minY, UIController uIController, InventoryView inventory)
     {
-        controller = FindObjectOfType<UIController>();
+        controller = uIController;
+        this.inventoryView = inventory;
         this.maxY = maxY;
-        this.minY = minY;   
+        this.minY = minY;
     }
-
-    public void GiveDamage(GameObject enemy)
+    public void InputInventoryController()
     {
-        controller.OpenFadeOutUI(enemy.transform, cam ,1 , 1 , new Vector3(50,50));
+        if (Input.GetMouseButtonDown(0))
+        {
+            inventoryView.DownImage(controller.GetGraphicRay<Image>());
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            inventoryView.UpImage(controller.GetGraphicRay<Image>());
+        }
+    }
+    public void InputInventoryKey()
+    {
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            controller.InputOpenKey(inventoryView.gameObject);
+            if (controller.GetOpenList() <= 0)
+            {
+                mouseMove = true;
+            }
+            else
+            {
+                mouseMove = false;
+                inventoryView.Open();
+            }
+        }
+    }
+    public void InputCloseKey()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            controller.InputCloseKey();
+            if (controller.GetOpenList() <= 0)
+            {
+                mouseMove = true;
+            }
+            else
+            {
+                mouseMove = false;
+            }
+        }
+    }
+    public void GiveDamage(GameObject enemy, string str)
+    {
+        controller.OpenFadeOutUI(enemy.transform, cam ,1 , 1 , new Vector2(50,50), new Vector2(75,75), str);
     }
     public void ChStateChange()
     {
@@ -100,12 +161,15 @@ public class NewBehaviourScript : MonoBehaviour
             
             ch.Movement(m_Input);
 
-            rotX += Input.GetAxis("Mouse X") * 5; //감도
-            rotY -= Input.GetAxis("Mouse Y") * 5;
+            if(mouseMove)
+            {
+                rotX += Input.GetAxis("Mouse X") * 5; //감도
+                rotY -= Input.GetAxis("Mouse Y") * 5;
 
-            rotY = Mathf.Clamp(rotY, minY, maxY);
-            cam.transform.localEulerAngles = new Vector3(rotY, 0, 0);
-            ch.Rotation(new Vector3(0, rotX, 0));
+                rotY = Mathf.Clamp(rotY, minY, maxY);
+                cam.transform.localEulerAngles = new Vector3(rotY, 0, 0);
+                ch.Rotation(new Vector3(0, rotX, 0));
+            }
         }
     }
     public void Jump()
@@ -122,9 +186,36 @@ public class NewBehaviourScript : MonoBehaviour
     {
         if(ch != null)
         {
-            Ray ray = new Ray();
-            ray = cam.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
-            ch.InteractingRay(ray/*, layerMask*/, KeyCode.E);
+            ray = cam.ScreenPointToRay(new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
+
+            if (Physics.Raycast(ray, out hit, interRange/*, mask*/))
+            {
+                //e이미지 띄우기
+                if(hit.transform.GetComponent<Inter>() != null)
+                {
+                    if(hit.transform.GetComponent<Inter>().uninter == false)
+                    {
+                        controller.OpenUI(controller.interUI.gameObject);
+                    }
+                    else
+                        controller.CloseUI(controller.interUI.gameObject);
+                }
+                else
+                    controller.CloseUI(controller.interUI.gameObject);
+            }
+            else
+            {
+                //e이미지 지우기
+                controller.CloseUI(controller.interUI.gameObject);
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                if (hit.transform != null && hit.transform.GetComponent<Inter>() != null)
+                {
+                    hit.transform.GetComponent<Inter>().Interaction(ch);
+                }
+            }
         }
     }
     public void HandUse()
@@ -134,8 +225,41 @@ public class NewBehaviourScript : MonoBehaviour
             ch.ItemUse();
         }
     }
+    public void HandChange()
+    {
+        if (ch != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ch.GetInventory().HandChange(0);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ch.GetInventory().HandChange(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ch.GetInventory().HandChange(2);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                ch.GetInventory().HandChange(3);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                ch.GetInventory().HandChange(4);
+            }
+        }
+    }
     public void AddRotY(float f)
     {
         rotY -= f;
+    }
+
+    //
+
+    public InventoryView GetInventoryView()
+    {
+        return inventoryView;
     }
 }

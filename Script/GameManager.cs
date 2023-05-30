@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,24 +20,29 @@ public class GameManager : MonoBehaviour
     [Header("캐릭터 선택창")]
     public SelectMenu selectMenu;
     public GameObject inGamePanel;
+    public InventoryView inventoryView;
 
     //인게임
-    [Header("인게임")]
-    public float test;
+    //[Header("인게임")]
 
     void Start()
     {
         uiController = FindObjectOfType<UIController>();
         createUnit = FindObjectOfType<CreateUnit>();
 
-        Warning();
 
+        //Warning();
     }
 
 
     void Update()
     {
         
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
     }
 
     //
@@ -108,7 +112,7 @@ public class GameManager : MonoBehaviour
                 return;
         //플레이어를 만드는 단계
         NewBehaviourScript p = new GameObject().AddComponent<NewBehaviourScript>();
-        p.Init(70, -70);
+        p.Init(70, -70, uiController, inventoryView);
         players.Add(p);
         p.name = "Player" + players.IndexOf(p).ToString();
 
@@ -117,6 +121,8 @@ public class GameManager : MonoBehaviour
         p.ch.player = p;
         p.cam = p.ch.hand.parent.GetComponent<Camera>();
         Camera.main.gameObject.SetActive(false);
+
+        p.GetInventoryView().SetInventory(p.ch.GetInventory());
 
         //
         inGamePanel.SetActive(true);

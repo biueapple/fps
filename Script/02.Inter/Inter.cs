@@ -11,7 +11,12 @@ public class Inter : Pa
     public Debris debris;
     //
     public bool hard;   //단단한지
-    
+    public bool uninter;    //상호작용을 안하는 오브젝트일경우 true
+
+    private void Start()
+    {
+        Init();
+    }
 
     public virtual void Interaction(Pa opponent)
     {
@@ -51,8 +56,29 @@ public class Inter : Pa
 
     public override float GetDamage(float f, Pa opponent)
     {
-        if(willBreak)
-            breaking(opponent);
-        return base.GetDamage(f, opponent);
+        Debug.Log($"{opponent}가 {transform.name}에게 {f}만큼 대미지");
+        opponent.GiveDamage(this, f);
+        if (hp - f > 0)
+        {
+            hp -= f;
+        }
+        else
+        {
+            hp = 0;
+            if (!immortality)
+            {
+                if (willBreak)
+                    breaking(opponent);
+                else
+                    Passing(opponent);
+            }
+        }
+        giveD = opponent;
+        return f;
+    }
+
+    public bool GetHard()
+    {
+        return hard;
     }
 }

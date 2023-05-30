@@ -22,6 +22,10 @@ public class EnemyScriptble : ScriptableObject
     public float GetAttackRange()
     { return attackRange; }
     [SerializeField]
+    private float viewAngle;
+    public float GetViewAngle()
+    { return viewAngle; }
+    [SerializeField]
     private float effective_distance;
     public float GetEffecive()
     { return effective_distance; }

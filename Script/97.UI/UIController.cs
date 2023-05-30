@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
-using System.Runtime.CompilerServices;
 
 public class UIController : MonoBehaviour
 {
@@ -19,6 +18,7 @@ public class UIController : MonoBehaviour
     private List<GameObject> basicsUI = new List<GameObject>();         //기본적으로 항상 열러있는 ui
     public GameObject bottomUI;            //uiOpens가 0일때 esc누르면 나올 가장 아래 ui
     public Text damageUI;
+    public Image interUI;
 
 
     // Start is called before the first frame update
@@ -36,19 +36,22 @@ public class UIController : MonoBehaviour
         
     }
 
-    public void OpenFadeOutUI(Transform enemy, Camera cam, float wait, float fade,  Vector2 plus)
+    public void OpenFadeOutUI(Transform enemy, Camera cam, float wait, float fade,  Vector2 plus1, Vector2 plus2, string str)
     {
         Text text = Instantiate(damageUI ,canvas.transform);
         text.gameObject.SetActive(true);
         StartCoroutine(FadeOut(text, wait, fade, true));
-        StartCoroutine(Follow(text, cam, enemy, wait + fade, plus));
+        StartCoroutine(Follow(text, str, cam, enemy.position, wait + fade, plus1, plus2));
     }
-    public IEnumerator Follow(Text text, Camera cam, Transform enemy, float time, Vector3 plus)
+    public IEnumerator Follow(Text text, string str, Camera cam, Vector3 enemy, float time, Vector2 plus1, Vector2 plus2)
     {
         float t = 0;
-        while(true)
+        Vector2 vector = new Vector2(UnityEngine.Random.Range(plus1.x, plus2.x), UnityEngine.Random.Range(plus1.y, plus2.y));
+        text.text = str;
+        while (true)
         {
-            text.rectTransform.anchoredPosition = cam.WorldToScreenPoint(enemy.position) + plus;
+            text.rectTransform.anchoredPosition = cam.WorldToScreenPoint(enemy);
+            text.rectTransform.anchoredPosition += vector;
 
             yield return null;
             t += Time.deltaTime;
@@ -148,7 +151,7 @@ public class UIController : MonoBehaviour
     }
 
 
-    private void OpenUI(GameObject uiObj)
+    public void OpenUI(GameObject uiObj)
     {
         uiObj.SetActive(true);
         TouchUI(uiObj);
@@ -158,7 +161,7 @@ public class UIController : MonoBehaviour
         }
             
     }
-    private void CloseUI(GameObject uiObj)
+    public void CloseUI(GameObject uiObj)
     {
         uiObj.gameObject.SetActive(false);
         if(uiOpens.Contains(uiObj))
@@ -177,6 +180,10 @@ public class UIController : MonoBehaviour
 
     //
 
+    public int GetOpenList()
+    {
+        return uiOpens.Count;
+    }
     public Transform GetGraphicRay()
     {
         results.Clear();

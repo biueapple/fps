@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 public class Ch : Unit
@@ -23,9 +20,10 @@ public class Ch : Unit
         inventory = new Inventory(3, this);
     }
 
-    public override void GiveDamage(Pa victim)
+    public override void GiveDamage(Pa victim, float f)
     {
-        player.GiveDamage(victim.gameObject);
+        base.GiveDamage(victim, f);
+        player.GiveDamage(victim.gameObject, f.ToString());
     }
 
     public void ScreenShaking(float figure, float t)
@@ -49,11 +47,11 @@ public class Ch : Unit
         }
     }
 
-    public void InteractingRay(Ray ray/*, LayerMask mask*/, KeyCode code)
+    public void InteractingRay(Ray ray/*, LayerMask mask*/, KeyCode code, float range)
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, float.MaxValue/*, mask*/))
+        if (Physics.Raycast(ray, out hit, range/*, mask*/))
         {
             if (hit.transform.GetComponent<Inter>() != null)
             {
@@ -70,13 +68,10 @@ public class Ch : Unit
     }
     public void ItemAcquired(Item item)
     {
-        if (inventory.AddItem(item))
+        if (!inventory.ItemAcquired(item))
         {
-            item.Acquired(this);
-        }
-        if(item.kind == ITEM_KIND.EQUIP)
-        {
-            inventory.EquipItem(item);
+            int mask = (1 << 10);
+            item.Throw(Vector3.zero, 0, 50, mask, null, 0.1f);
         }
     }
     public void BulletAcquired(KIND_BULLET kind, int count)
@@ -136,5 +131,10 @@ public class Ch : Unit
     public virtual void Skill()
     {
 
+    }
+
+    public Inventory GetInventory()
+    {
+        return inventory;
     }
 }

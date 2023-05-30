@@ -13,7 +13,6 @@ public class Debris : MonoBehaviour
 
     public void Explosion()
     {
-        Debug.Log("123");
         for(int i = 0; i < m_goPrefap.Length; i++)
         {
             m_goPrefap[i].transform.parent = null;

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Pa : MonoBehaviour
@@ -25,7 +23,7 @@ public class Pa : MonoBehaviour
     public virtual float GetDamage(float f, Pa opponent)
     {
         Debug.Log($"{opponent}가 {transform.name}에게 {f}만큼 대미지");
-        opponent.GiveDamage(this);
+        opponent.GiveDamage(this, f);
         if(hp - f > 0)
         {
             hp -= f;
@@ -39,9 +37,9 @@ public class Pa : MonoBehaviour
         giveD = opponent;
         return f;
     }
-    public virtual void GiveDamage(Pa victim)
+    public virtual void GiveDamage(Pa victim, float f)
     {
-
+        Debug.Log($"{transform.name}가 {victim.name}에게 {f} 만큼 대미지");
     }
     public float GetRecovery(float f, Pa opponent)
     {

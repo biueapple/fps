@@ -114,7 +114,6 @@ public class Gun : Item
         }
         else if (Input.GetMouseButtonDown(1))    //우클릭 조준
         {
-            Debug.Log("줌");
             if (user.GetComponent<Animator>().GetBool("Zoom"))
             {
                 user.GetComponent<Animator>().SetBool("Zoom", false);
@@ -149,5 +148,11 @@ public class Gun : Item
         {
             GetComponent<Animator>().enabled = true;
         }
+        FindObjectOfType<BulletCount>().Interlock(this);
+    }
+    public override void ActiveFalse()
+    {
+        FindObjectOfType<BulletCount>().Interlock(null);
+        base.ActiveFalse();
     }
 }

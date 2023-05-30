@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +14,7 @@ public class MMNine : Item
 
     void Update()
     {
-        
+        GetComponent<Rigidbody>().velocity += new Vector3(0, -0.01f, 0); 
     }
 
     public void Fire(Vector3 dir, Ch user, float figure)
@@ -24,6 +23,7 @@ public class MMNine : Item
         this.figure = figure;
         transform.LookAt(transform.position + dir);
         gameObject.AddComponent<Rigidbody>();
+        GetComponent<Rigidbody>().useGravity = false;
         GetComponent<Rigidbody>().mass = 0.05f;
         GetComponent<Rigidbody>().AddForce(dir * power);
 
@@ -34,7 +34,7 @@ public class MMNine : Item
     {
         if(other.transform != user.transform)
         {
-            if(other.GetComponent<Pa>() != null)
+            if (other.GetComponent<Pa>() != null)
             {
                 other.GetComponent<Pa>().GetDamage(figure, user);
             }

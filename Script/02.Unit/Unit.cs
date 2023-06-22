@@ -9,12 +9,19 @@ public class Unit : Pa
     public Barricade barricade;      //내가 지금 몸을 숨길 바리케이드
     public Vector3 barricadePosition = Vector3.zero;
     protected UNITSTATE state;
-    protected float moveSpeed = 1;      //움직임의 배율
+    protected float speed;
+    public float moveSpeed = 3;      //움직임의 배율
+    public float runSpeed = 4;
+    public float sitSpeed = 1.5f;
     protected int wallMask = (1 << 10) | (1 << 8);  //Wall, Opaque
     protected int unitMask = (1 << 7);              //Unit
     protected int glassMask = (1 << 9);             //유리랑 바리케이드
 
-
+    public override void Init()
+    {
+        base.Init();
+        speed = moveSpeed;
+    }
 
     public void FindBarricade(Unit target, float range)
     {
@@ -39,12 +46,17 @@ public class Unit : Pa
         {
             barricade = list[index].GetComponent<Barricade>();
             barricadePosition = list[index].GetComponent<Barricade>().GetBarricade() + list[index].transform.position;
+            barricade.SetPassingCall(BarricadeDelete);
         }
         else
         {
             barricade = null;
             barricadePosition = Vector3.negativeInfinity;
         }
+    }
+    protected virtual void BarricadeDelete()
+    {
+        barricade = null;
     }
     public void Rotation(Vector3 ro)
     {
@@ -58,7 +70,7 @@ public class Unit : Pa
             GetComponent<Rigidbody>().freezeRotation = true;
         }
         direction = transform.TransformDirection(direction);
-        transform.GetComponent<Rigidbody>().MovePosition(transform.position + direction * Time.deltaTime * moveSpeed);
+        transform.GetComponent<Rigidbody>().MovePosition(transform.position + direction * Time.deltaTime * speed);
     }
     public void AutomaticMovement(Vector3 direction)     //자동이동 (봇이 쓰는거)
     {
@@ -66,6 +78,7 @@ public class Unit : Pa
         {
             gameObject.AddComponent<NavMeshAgent>();
         }
+        GetComponent<NavMeshAgent>().isStopped = false;
         transform.GetComponent<NavMeshAgent>().destination = direction;
     }
     public void Jump(float power)
@@ -82,17 +95,17 @@ public class Unit : Pa
     public virtual void RunState()
     {
         state = UNITSTATE.RUN;
-        moveSpeed = 4;
+        speed = runSpeed;
     }
     public virtual void StandingState()
     {
         state = UNITSTATE.NONE;
-        moveSpeed = 2;
+        speed = moveSpeed;
     }
     public virtual void SittingState()
     {
         state = UNITSTATE.SITTING;
-        moveSpeed = 1.5f;
+        speed = sitSpeed;
     }
     public Transform Nearest(Transform[] list)
     {

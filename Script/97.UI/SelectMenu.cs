@@ -51,22 +51,5 @@ public class SelectMenu : MonoBehaviour
             selectedImage.sprite = null;
         }
     }
-
-    //public void CreateCharacter(Ch ch, Vector3 vector)
-    //{
-    //    player.ch = createUnit.GetCreateCharacter(ch);
-    //    player.ch.Init();
-    //    player.ch.player = player;
-    //    player.cam = player.ch.hand.parent.GetComponent<Camera>();
-    //    Camera.main.gameObject.SetActive(false);
-    //}
-
-    //public void StartButton()
-    //{
-    //    if (index < 0 || index >= createUnit.GetCharacters().Length)
-    //        return;
-    //    CreateCharacter(createUnit.GetCharacters()[index].GetComponent<Ch>(), Vector3.zero);
-    //    InGamePanel.SetActive(true);
-    //    gameObject.SetActive(false);
-    //}
+    
 }

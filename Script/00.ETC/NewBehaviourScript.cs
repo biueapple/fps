@@ -137,7 +137,7 @@ public class NewBehaviourScript : MonoBehaviour
     }
     public void GiveDamage(GameObject enemy, string str)
     {
-        controller.OpenFadeOutUI(enemy.transform, cam ,1 , 1 , new Vector2(50,50), new Vector2(75,75), str);
+        controller.OpenFadeOutUI(enemy.transform.position, cam ,1 , 1 , new Vector2(50,50), new Vector2(75,75), str);
     }
     public void ChStateChange()
     {

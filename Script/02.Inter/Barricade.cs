@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Barricade : Inter
@@ -12,8 +13,8 @@ public class Barricade : Inter
     private Vector3 front;
     private Vector3 back;
 
-    public Unit t;
     public Mesh mesh;
+    protected Action passingDelegate;
 
     private void Awake()
     {
@@ -28,9 +29,19 @@ public class Barricade : Inter
 
     void Update()
     {
-        //SetPoint(new Vector3(1, 1, 1), t);
+        
     }
 
+    public void SetPassingCall(Action action)
+    {
+        passingDelegate =action;
+    }
+
+    protected override void Passing(Pa opponent)
+    {
+        if(passingDelegate != null) { passingDelegate(); }
+        base.Passing(opponent);
+    }
 
     public Vector3 GetBarricade()
     {

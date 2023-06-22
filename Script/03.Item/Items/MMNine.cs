@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MMNine : Item
@@ -22,13 +20,39 @@ public class MMNine : Item
         this.user = user;
         this.figure = figure;
         transform.LookAt(transform.position + dir);
-        gameObject.AddComponent<Rigidbody>();
-        GetComponent<Rigidbody>().useGravity = false;
-        GetComponent<Rigidbody>().mass = 0.05f;
+        if(GetComponent<Rigidbody>() == null)
+        {
+            gameObject.AddComponent<Rigidbody>();
+            GetComponent<Rigidbody>().useGravity = false;
+            GetComponent<Rigidbody>().mass = 0.05f;
+            GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
+
         GetComponent<Rigidbody>().AddForce(dir * power);
+        
 
         Destroy(this.gameObject, 4f);
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(user != null)
+        {
+            if (collision.transform != user.transform)
+            {
+                if (collision.transform.GetComponent<Pa>() != null)
+                {
+                    if (user != null)
+                        collision.transform.GetComponent<Pa>().GetDamage(figure, user);
+                    else
+                        collision.transform.GetComponent<Pa>().GetDamage(figure, null);
+                }
+                Destroy(this.gameObject);
+            }
+        }
+    }
+
+
 
     private void OnTriggerEnter(Collider other)
     {

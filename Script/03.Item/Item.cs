@@ -18,6 +18,11 @@ public class Item : Inter
     public float figure;
 
 
+    public override float GetDamage(float f, Pa opponent)
+    {
+        return 0;
+    }
+
     public virtual void Cancel()            //user 무언가 행동을 했을때 호출해줘야해
     {
 
@@ -219,7 +224,7 @@ public class Item : Inter
             gameObject.AddComponent<Collider>();
         }
     }
-    public void ZeroSet()
+    public virtual void ZeroSet()
     {
         transform.localPosition = Vector3.zero;
         transform.localEulerAngles = Vector3.zero;

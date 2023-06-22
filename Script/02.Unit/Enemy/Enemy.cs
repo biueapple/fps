@@ -21,15 +21,27 @@ public class Enemy : Unit
     protected RaycastHit hit = new RaycastHit();
     protected List<Collider> colls = new List<Collider>();  //플레이어 감지 리스트
 
-    protected Coroutine coroutine_M = null;
     protected Coroutine coroutine_A = null;
 
+    public Transform handTransform;
+    public Gun hand;
+    public Gun handgun;
 
     public override void Init()
     {
         base.Init();
         manager = FindObjectOfType<GameManager>();
         home = direction = transform.position;
+        ItemEquip(handgun);
+    }
+
+    public void ItemEquip(Gun h)
+    {
+        h.Init();
+        h.Active();
+        h.transform.parent = handTransform;
+        h.ZeroSet();
+        hand = h;
     }
 
     private void Awake()
@@ -78,11 +90,8 @@ public class Enemy : Unit
                 else if((barricadePosition != Vector3.zero && barricade == null) || ZeroY(barricadePosition) == ZeroY(transform.position)) //(조건에 맞는 바리케이드가 없으니 바로 공격) || (바리케이드로 이동했으니 공격)
                 {
                     //공격
-                    if (coroutine_M != null)
-                    {
-                        StopCoroutine(coroutine_M);
-                        coroutine_M = null;
-                    }
+                    Debug.Log(GetComponent<NavMeshAgent>().velocity);
+                    GetComponent<NavMeshAgent>().isStopped = true;
 
                     if (coroutine_A == null)
                     {
@@ -101,18 +110,17 @@ public class Enemy : Unit
                         coroutine_A = null;
                     }
 
-                    if (coroutine_M == null)
-                    {
-                        coroutine_M = StartCoroutine(MovingC());
-                    }
+
+                    AutomaticMovement(direction);
+                    
                 }
             }
             else
             {
                 //이동
-                if (transform.position != direction && coroutine_M == null && coroutine_A == null)
+                if (transform.position != direction && coroutine_A == null)
                 {
-                    coroutine_M = StartCoroutine(MovingC());
+                    AutomaticMovement(direction);
                 }
             }
 
@@ -129,12 +137,8 @@ public class Enemy : Unit
             //공격
             if ( target != null && Vector3.Distance(transform.position, target.transform.position) <= enemyScriptble.GetAttackRange())
             {
-                if(coroutine_M != null)
-                {
-                    StopCoroutine(coroutine_M);
-                    coroutine_M = null;
-                }
-                    
+                GetComponent<NavMeshAgent>().isStopped = true;
+
                 if (coroutine_A == null)
                 {
                     coroutine_A = StartCoroutine(AttackC());
@@ -142,33 +146,33 @@ public class Enemy : Unit
                 }
             }
             //이동
-            else if(transform.position != direction && coroutine_M == null && coroutine_A == null)
+            else if(transform.position != direction && coroutine_A == null)
             {
                 GetComponent<NavMeshAgent>().isStopped = false;
-                coroutine_M = StartCoroutine(MovingC());
+                AutomaticMovement(direction);
             }
 
             yield return new WaitForSeconds(0.2f);
         }
     }
 
-    protected IEnumerator MovingC()
-    {
-        while (true)
-        {
-            if (ApproximatelyVector(ZeroY(transform.position), ZeroY(direction)))
-            {
-                GetComponent<NavMeshAgent>().isStopped = true;
-                coroutine_M = null;
-                break;
-            }
+    //protected IEnumerator MovingC()
+    //{
+    //    while (true)
+    //    {
+    //        if (ApproximatelyVector(ZeroY(transform.position), ZeroY(direction)))
+    //        {
+    //            GetComponent<NavMeshAgent>().isStopped = true;
+    //            coroutine_M = null;
+    //            break;
+    //        }
 
-            GetComponent<NavMeshAgent>().isStopped = false;
-            AutomaticMovement(direction);
+    //        GetComponent<NavMeshAgent>().isStopped = false;
+    //        AutomaticMovement(direction);
 
-            yield return null;
-        }
-    }
+    //        yield return null;
+    //    }
+    //}
 
     protected IEnumerator AttackC()
     {
@@ -179,7 +183,8 @@ public class Enemy : Unit
         {
             if(enemyScriptble.GetEffecive() == 0)   //원거리일경우 0임
             {
-                target.GetDamage(enemyScriptble.GetDamage(), this);
+                //target.GetDamage(enemyScriptble.GetDamage(), this);
+                hand.Shot(null);
             }
             else
             if (Vector3.Distance(transform.position, target.transform.position) <= enemyScriptble.GetEffecive())

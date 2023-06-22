@@ -1,11 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.XR;
-using static UnityEditor.Progress;
 
 public class Inventory
 {
@@ -162,6 +157,7 @@ public class Inventory
 
     public bool RemoveItem(Item item)
     {
+
         for(int i = 0; i < items.Length; i++)
         {
             if (items[i].Count > 0)
@@ -182,6 +178,11 @@ public class Inventory
                 if (consum[i].Contains(item))
                 {
                     consum[i].Remove(item);
+
+                    if (consum[i].Count == 0)
+                    {
+                        hand = null;
+                    }
 
                     return true;
                 }

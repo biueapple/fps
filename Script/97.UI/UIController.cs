@@ -36,12 +36,12 @@ public class UIController : MonoBehaviour
         
     }
 
-    public void OpenFadeOutUI(Transform enemy, Camera cam, float wait, float fade,  Vector2 plus1, Vector2 plus2, string str)
+    public void OpenFadeOutUI(Vector3 enemy, Camera cam, float wait, float fade,  Vector2 plus1, Vector2 plus2, string str)
     {
         Text text = Instantiate(damageUI ,canvas.transform);
         text.gameObject.SetActive(true);
         StartCoroutine(FadeOut(text, wait, fade, true));
-        StartCoroutine(Follow(text, str, cam, enemy.position, wait + fade, plus1, plus2));
+        StartCoroutine(Follow(text, str, cam, enemy, wait + fade, plus1, plus2));
     }
     public IEnumerator Follow(Text text, string str, Camera cam, Vector3 enemy, float time, Vector2 plus1, Vector2 plus2)
     {

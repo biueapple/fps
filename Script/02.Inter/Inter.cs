@@ -56,7 +56,6 @@ public class Inter : Pa
 
     public override float GetDamage(float f, Pa opponent)
     {
-        Debug.Log($"{opponent}가 {transform.name}에게 {f}만큼 대미지");
         opponent.GiveDamage(this, f);
         if (hp - f > 0)
         {

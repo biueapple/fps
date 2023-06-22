@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Grenade : Item
 {
+    public Explosion explosion;
+
     public override void Action(Ch opponent)
     {
         if(Input.GetMouseButtonDown(0))
@@ -15,7 +17,8 @@ public class Grenade : Item
     protected override void Effect()
     {
         base.Effect();
-        for(int i = 0; i < paList.Count; i++)
+        explosion.ExplosionParticle(transform);
+        for (int i = 0; i < paList.Count; i++)
         {
             paList[i].GetDamage(figure, user);
             if (paList[i].GetComponent<Inter>() != null)

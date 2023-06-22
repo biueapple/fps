@@ -22,7 +22,6 @@ public class Pa : MonoBehaviour
     }
     public virtual float GetDamage(float f, Pa opponent)
     {
-        Debug.Log($"{opponent}가 {transform.name}에게 {f}만큼 대미지");
         opponent.GiveDamage(this, f);
         if(hp - f > 0)
         {
@@ -39,7 +38,7 @@ public class Pa : MonoBehaviour
     }
     public virtual void GiveDamage(Pa victim, float f)
     {
-        Debug.Log($"{transform.name}가 {victim.name}에게 {f} 만큼 대미지");
+        
     }
     public float GetRecovery(float f, Pa opponent)
     {

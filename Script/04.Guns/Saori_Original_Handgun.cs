@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Saori_Original_Handgun : Gun
@@ -8,35 +6,7 @@ public class Saori_Original_Handgun : Gun
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (magazine > 0 && canShot)
-            {
-                magazine--;
-
-                audioSource.PlayOneShot(clips[0]);
-
-                animator.SetBool("Shot", true);
-
-                gunFire.Play();
-
-                RPMCoroutine = StartCoroutine(RPMC());
-                canShot = false;
-
-                if (opponent != null)
-                {
-                    user = opponent;
-                }
-                if (user != null)
-                {
-                    bullets[magazine].gameObject.SetActive(true);
-                    bullets[magazine].transform.position = muzzle.transform.position;
-                    bullets[magazine].Fire(muzzle.transform.right, user, figure);
-                    user.ScreenShaking(gunScriptble.GetRecoil(), gunScriptble.GetRPM());
-                }
-            }
-            else
-            {
-                Reload();
-            }
+            Shot(opponent);
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {
@@ -55,9 +25,48 @@ public class Saori_Original_Handgun : Gun
         }
     }
 
+    public override void Shot(Ch opponent)
+    {
+        if (magazine > 0 && canShot)
+        {
+            magazine--;
+
+            audioSource.PlayOneShot(clips[0]);
+
+            animator.SetBool("Shot", true);
+
+            gunFire.Play();
+
+            RPMCoroutine = StartCoroutine(RPMC());
+            canShot = false;
+
+            if (opponent != null)
+            {
+                user = opponent;
+            }
+            bullets[magazine].gameObject.SetActive(true);
+            bullets[magazine].transform.position = muzzle.transform.position;
+            if (user != null)
+            {
+                bullets[magazine].Fire(muzzle.transform.right, user, figure);
+                user.ScreenShaking(gunScriptble.GetRecoil(), gunScriptble.GetRPM());
+            }
+        }
+        else
+        {
+            Reload();
+        }
+    }
+
     public override void Active()       //아이템을 들었을 때 자동 재장전
     {
         base.Active();
+        transform.localEulerAngles = new Vector3(0, -90, 0);
+    }
+
+    public override void ZeroSet()
+    {
+        transform.localPosition = Vector3.zero;
         transform.localEulerAngles = new Vector3(0, -90, 0);
     }
 }
